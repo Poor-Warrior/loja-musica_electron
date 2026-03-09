@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+    <nav>
+        <a href="../index.html">Home</a>
+        <a href="">Cadastro</a>
+        <a href="">Musicas</a>
+        <a href="">Estilos</a>
+        <a href="">Artistas</a>
+        <a href="">Albuns</a>
+        <a href="">Gravadoras</a>
+    </nav>
+    
+    <main>
+        <h2>Selecione a o que voce gostaria de cadastrar:
+        </h2>
+        <!-- nav-tab(Bootstrap)  com os formularios para cadrastro-->
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav-musica-tab" data-bs-toggle="tab" data-bs-target="#nav-musica" type="button" role="tab" aria-controls="nav-musica" aria-selected="true">
+                Musica
+            </button>
+            <button class="nav-link" id="nav-estilo-tab" data-bs-toggle="tab" data-bs-target="#nav-estilo" type="button" role="tab" aria-controls="nav-estilo" aria-selected="false">
+                Estilo</button>
+            <button class="nav-link" id="nav-artista-tab" data-bs-toggle="tab" data-bs-target="#nav-artista" type="button" role="tab" aria-controls="nav-artista" aria-selected="false">
+                Artista
+            </button>
+            <button class="nav-link" id="nav-album-tab" data-bs-toggle="tab" data-bs-target="#nav-album" type="button" role="tab" aria-controls="nav-album" aria-selected="false">
+                Album
+            </button>
+            <button class="nav-link" id="nav-gravadora-tab" data-bs-toggle="tab" data-bs-target="#nav-gravadora" type="button" role="tab" aria-controls="nav-gravadora" aria-selected="false">
+                Gravadora
+            </button>
+        </div>
+
+        <!-- Conteudo das tabs -->
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-musica" role="tabpanel" aria-labelledby="nav-musica-tab" tabindex="0">
+                <form id="form-musica">
+                    <input type="text" name="" placeholder="" autofocus>
+                    <button type="submit">Salvar</button>
+                </form>
+
+                <h3>Ultimos Cadastros: </h3>
+                <button id="atualizar" onclick="">Atualizar Lista</button>
+
+                <table id="table-musica">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="tab-pane fade" id="nav-estilo" role="tabpanel" aria-labelledby="nav-estilo-tab" tabindex="0">
+                <form id="form-estilo">
+                    <input type="text" name="descricao" placeholder="Nome do estilo" autofocus>
+                    <button type="submit">Salvar</button>
+                </form>
+
+                <h3>Ultimos Cadastros: </h3>
+                <button id="atualizar" onclick="">Atualizar Lista</button>
+
+                <table id="table-estilo">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="tab-pane fade" id="nav-artista" role="tabpanel" aria-labelledby="nav-artista-tab" tabindex="0">
+                <form id="form-artista">
+                    <input type="text" name="" placeholder="" autofocus>
+                    <button type="submit">Salvar</button>
+                </form>
+
+                <h3>Ultimos Cadastros: </h3>
+                <button id="atualizar" onclick="">Atualizar Lista</button>
+
+                <table id="table-artista">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="tab-pane fade" id="nav-album" role="tabpanel" aria-labelledby="nav-album-tab" tabindex="0">
+                <form id="form-album">
+                    <input type="text" name="disco_nome" placeholder="Nome do album" autofocus>
+                    <input type="date" name="data_lancamento">
+
+                    <button type="submit">Salvar</button>
+                </form>
+
+                <h3>Ultimos Cadastros: </h3>
+                <button id="atualizar" onclick="">Atualizar Lista</button>
+
+                <table id="table-album">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="tab-pane fade" id="nav-gravadora" role="tabpanel" aria-labelledby="nav-gravadora-tab" tabindex="0">
+                <form id="form-gravadora">
+                    <input type="text" name="nome" placeholder="Nome da gravadora" autofocus>
+                    <button type="submit">Salvar</button>
+                </form>
+
+                <h3>Ultimos Cadastros: </h3>
+                <button id="atualizar" onclick="">Atualizar Lista</button>
+
+                <table id="table-gravadora">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script src="../../../node_modules/bootstrap/dist/js/bootstrap.js"></script>    
+    <script src="rendererListas.js"></script>
+    <script src="./formularios/cadastro_estilo.js"></script>
+</body>
+</html>
