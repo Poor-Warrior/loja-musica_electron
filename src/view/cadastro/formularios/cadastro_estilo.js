@@ -1,1 +1,1 @@
-// Controla a exibição das listas, editar e deletar elementos das tabelas
+// Contem as funções necessarias para salvar informações no banco de dados
