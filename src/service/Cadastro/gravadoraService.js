@@ -1,17 +1,17 @@
 const db = require('../../../database/connections');
 
-const criar = (descricao) => {
+const criar = (nome) => {
     return new Promise((resolve, reject) => {
-        db.run(`INSERT INTO estilo (descricao) VALUES (?)`, [descricao], function(err) {
+        db.run(`INSERT INTO gravadora (nome) VALUES (?)`, [nome], function(err) {
             if (err) reject(err);
-            else resolve({ id: this.lastID, descricao });
+            else resolve({ id: this.lastID, nome });
         });
     });
 };
 
 const listar = () => {
     return new Promise((resolve, reject) => {
-        db.all(`SELECT * FROM estilo`, (err, rows) => {
+        db.all(`SELECT * FROM gravadora`, (err, rows) => {
             if (err) reject(err);
             else resolve(rows);
         });
@@ -21,15 +21,15 @@ const listar = () => {
 const listarPaginado = (pagina = 1, busca = '') => {
     const limite = 20;
     const offset = (pagina - 1) * limite;
-    let query = `SELECT * FROM estilo`;
-    let countQuery = `SELECT COUNT(*) as total FROM estilo`;
+    let query = `SELECT * FROM gravadora`;
+    let countQuery = `SELECT COUNT(*) as total FROM gravadora`;
     let params = [];
     if (busca) {
-        query += ` WHERE descricao LIKE ?`;
-        countQuery += ` WHERE descricao LIKE ?`;
+        query += ` WHERE nome LIKE ?`;
+        countQuery += ` WHERE nome LIKE ?`;
         params.push(`%${busca}%`);
     }
-    query += ` ORDER BY estilo_id DESC LIMIT ? OFFSET ?`;
+    query += ` ORDER BY gravadora_id DESC LIMIT ? OFFSET ?`;
     const queryParams = [...params, limite, offset];
     const countParams = [...params];
     return new Promise((resolve, reject) => {
@@ -47,24 +47,23 @@ const listarPaginado = (pagina = 1, busca = '') => {
 
 const excluir = (id) => {
     return new Promise((resolve, reject) => {
-        db.run(`DELETE FROM estilo WHERE estilo_id = ?`, [id], function(err) {
+        db.run(`DELETE FROM gravadora WHERE gravadora_id = ?`, [id], function(err) {
             if (err) reject(err);
             else resolve({ changes: this.changes });
         });
     });
 };
 
-const editar = ({ id, descricao }) => {
+const editar = ({ id, nome }) => {
     return new Promise((resolve, reject) => {
-        db.run(`UPDATE estilo SET descricao = ? WHERE estilo_id = ?`, [descricao, id], function(err) {
+        db.run(`UPDATE gravadora SET nome = ? WHERE gravadora_id = ?`, [nome, id], function(err) {
             if (err) reject(err);
             else resolve({ changes: this.changes });
         });
     });
 };
 
-module.exports = { 
-    criar,
+module.exports = { criar, 
     listar, 
     listarPaginado, 
     excluir, 
