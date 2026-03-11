@@ -1,33 +1,33 @@
-const db = require('./connetions');
+const db = require('./connections');
 
 db.run(`
     CREATE TABLE IF NOT EXISTS artista (
-        artista_id INTERGER PRIMARY KEY AUTOINCREMENT,
+        artista_id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome VARCHAR(255) NOT NULL
     );
 `);
 
 db.run(`
     CREATE TABLE IF NOT EXISTS estilo (
-        estilo_id INTERGER PRIMARY KEY AUTOINCREMENT,
+        estilo_id INTEGER PRIMARY KEY AUTOINCREMENT,
         descricao VARCHAR(255) NOT NULL
     );
 `);
 
 db.run(`
     CREATE TABLE IF NOT EXISTS gravadora (
-        gravadora_id INTERGER PRIMARY KEY AUTOINCREMENT,
+        gravadora_id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome VARCHAR(255) NOT NULL
     ); 
 `);
 
 db.run(`
     CREATE TABLE IF NOT EXISTS musica (
-        musica_id INTERGER PRIMARY KEY AUTOINCREMENT,
+        musica_id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome VARCHAR(255) NOT NULL,
         duracao VARCHAR(255) NOT NULL,
         data_lancamento DATE NOT NULL,
-        estilo_id INTERGER NOT NULL,
+        estilo_id INTEGER NOT NULL,
         
         -- regra de chave estrangeira
         FOREIGN KEY (estilo_id) REFERENCES estilo (estilo_id)
@@ -36,11 +36,11 @@ db.run(`
 
 db.run(`
     CREATE TABLE IF NOT EXISTS disco (
-        disco_id INTERGER PRIMARY KEY AUTOINCREMENT,
+        disco_id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome VARCHAR(255) NOT NULL,
         data_lancamento DATE NOT NULL,
         imagem TEXT,
-        gravadora_id INTERGER,
+        gravadora_id INTEGER,
         
         -- regra de chave estrangeira
         FOREIGN KEY (gravadora_id) REFERENCES gravadora (gravadora_id)
@@ -49,8 +49,8 @@ db.run(`
 
 db.run(`
     CREATE TABLE IF NOT EXISTS musica_disco (
-        musica_id INTERGER NOT NULL,
-        disco_id INTERGER NOT NULL,
+        musica_id INTEGER NOT NULL,
+        disco_id INTEGER NOT NULL,
         
         -- regra de chave estrangeira
         FOREIGN KEY (musica_id) REFERENCES musica (musica_id),
@@ -63,8 +63,8 @@ db.run(`
 
 db.run(`
     CREATE TABLE IF NOT EXISTS compositor (
-        musica_id INTERGER NOT NULL,
-        artista_id INTERGER NOT NULL,
+        musica_id INTEGER NOT NULL,
+        artista_id INTEGER NOT NULL,
         
         -- regra de chave estrangeira
         FOREIGN KEY (musica_id) REFERENCES musica (musica_id),
@@ -77,8 +77,8 @@ db.run(`
 
 db.run(`
     CREATE TABLE IF NOT EXISTS interprete (
-        musica_id INTERGER NOT NULL,
-        artista_id INTERGER NOT NULL,
+        musica_id INTEGER NOT NULL,
+        artista_id INTEGER NOT NULL,
         
         -- regra de chave estrangeira
         FOREIGN KEY (musica_id) REFERENCES musica (musica_id),

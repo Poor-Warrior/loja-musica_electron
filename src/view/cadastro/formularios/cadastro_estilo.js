@@ -1,1 +1,0 @@
-// Contem as funções necessarias para salvar informações no banco de dados

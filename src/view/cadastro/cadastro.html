@@ -42,7 +42,12 @@
         <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active" id="nav-musica" role="tabpanel" aria-labelledby="nav-musica-tab" tabindex="0">
                 <form id="form-musica">
-                    <input type="text" name="" placeholder="" autofocus>
+                    <input type="text" name="musica_nome" placeholder="Nome da musica" autofocus>
+                    <input type="time" min="hh:mm" name="duracao">
+                    <input type="date" name="musica_lancamento">
+                    <select name="estilo_id" id="Lista_estilo">
+                        <option value="">Selecione o estilo</option>
+                    </select>
                     <button type="submit">Salvar</button>
                 </form>
 
@@ -53,7 +58,10 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Descrição</th>
+                            <th>Nome</th>
+                            <th>Duração</th>
+                            <th>Data de lançamento</th>
+                            <th>Estilo</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -88,7 +96,7 @@
 
             <div class="tab-pane fade" id="nav-artista" role="tabpanel" aria-labelledby="nav-artista-tab" tabindex="0">
                 <form id="form-artista">
-                    <input type="text" name="" placeholder="" autofocus>
+                    <input type="text" name="artista_nome" placeholder="Nome do artista" autofocus>
                     <button type="submit">Salvar</button>
                 </form>
 
@@ -99,7 +107,7 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Descrição</th>
+                            <th>Nome</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -113,6 +121,11 @@
                 <form id="form-album">
                     <input type="text" name="disco_nome" placeholder="Nome do album" autofocus>
                     <input type="date" name="data_lancamento">
+                    <input type="file" name="disco_img" id="disco_img">
+                    <input type="date" name="disco_lancamento">
+                    <select name="gravadora_id" id="Lista_gravadora">
+                        <option value="">Selecione a gravadora</option>
+                    </select>
 
                     <button type="submit">Salvar</button>
                 </form>
@@ -124,7 +137,10 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Descrição</th>
+                            <th>Capa</th>
+                            <th>Album</th>
+                            <th>Data de lançamento</th>
+                            <th>Gravadora</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -147,7 +163,7 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Descrição</th>
+                            <th>Nome da Gravadora</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
