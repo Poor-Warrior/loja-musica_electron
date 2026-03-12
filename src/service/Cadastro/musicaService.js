@@ -24,7 +24,7 @@ const listarPaginado = (pagina = 1, busca = '') => {
         countQuery += ` WHERE m.nome LIKE ?`;
         params.push(`%${busca}%`);
     }
-    query += ` ORDER BY m.data_lancamento DESC LIMIT ? OFFSET ?`;
+    query += ` ORDER BY m.musica_id ASC LIMIT ? OFFSET ?`;
     const queryParams = [...params, limite, offset];
     const countParams = [...params];
     return new Promise((resolve, reject) => {

@@ -29,7 +29,7 @@ const listarPaginado = (pagina = 1, busca = '') => {
         countQuery += ` WHERE nome LIKE ?`;
         params.push(`%${busca}%`);
     }
-    query += ` ORDER BY artista_id DESC LIMIT ? OFFSET ?`;
+    query += ` ORDER BY artista_id ASC LIMIT ? OFFSET ?`;
     const queryParams = [...params, limite, offset];
     const countParams = [...params];
     return new Promise((resolve, reject) => {

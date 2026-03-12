@@ -29,7 +29,7 @@ const listarPaginado = (pagina = 1, busca = '') => {
         countQuery += ` WHERE descricao LIKE ?`;
         params.push(`%${busca}%`);
     }
-    query += ` ORDER BY estilo_id DESC LIMIT ? OFFSET ?`;
+    query += ` ORDER BY estilo_id ASC LIMIT ? OFFSET ?`;
     const queryParams = [...params, limite, offset];
     const countParams = [...params];
     return new Promise((resolve, reject) => {
