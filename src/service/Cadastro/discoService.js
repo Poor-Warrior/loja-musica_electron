@@ -43,7 +43,7 @@ const listarPaginado = (pagina = 1, busca = '') => {
 const listarRecentes = () => {
     return new Promise((resolve, reject) => {
         db.all(
-            `SELECT d.*, g.nome as gravadora_nome FROM disco d LEFT JOIN gravadora g ON d.gravadora_id = g.gravadora_id ORDER BY d.data_lancamento DESC LIMIT 10`,
+            `SELECT d.*, g.nome as gravadora_nome FROM disco d LEFT JOIN gravadora g ON d.gravadora_id = g.gravadora_id ORDER BY d.disco_id DESC LIMIT 10`,
             (err, rows) => {
                 if (err) reject(err);
                 else resolve(rows);

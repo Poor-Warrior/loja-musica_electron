@@ -43,7 +43,7 @@ const listarPaginado = (pagina = 1, busca = '') => {
 const listarRecentes = () => {
     return new Promise((resolve, reject) => {
         db.all(
-            `SELECT m.*, e.descricao as estilo_nome FROM musica m LEFT JOIN estilo e ON m.estilo_id = e.estilo_id ORDER BY m.data_lancamento DESC LIMIT 10`,
+            `SELECT m.*, e.descricao as estilo_nome FROM musica m LEFT JOIN estilo e ON m.estilo_id = e.estilo_id ORDER BY m.musica_id DESC LIMIT 10`,
             (err, rows) => {
                 if (err) reject(err);
                 else resolve(rows);

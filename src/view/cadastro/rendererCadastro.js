@@ -1,4 +1,4 @@
-import { showMessage, showConfirm } from './modulos/utilities.js';
+import { showMessage, showConfirm } from './modulos/utils.js';
 import { loadEstiloSelect, loadRecentEstilos, setupEstiloForm } from './modulos/estilo.js';
 import { loadGravadoraSelect, loadRecentGravadoras, setupGravadoraForm } from './modulos/gravadora.js';
 import { loadRecentArtistas, setupArtistaForm } from './modulos/artista.js';

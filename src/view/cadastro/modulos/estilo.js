@@ -1,4 +1,4 @@
-import { showMessage, showConfirm} from "./utilities";
+import {showMessage, showConfirm} from './utils.js';
 
 export async function loadEstiloSelect() {
     const select = document.getElementById('Lista_estilo');

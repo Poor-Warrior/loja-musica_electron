@@ -1,4 +1,4 @@
-import { showMessage, showConfirm } from './utilities.js';
+import { showMessage, showConfirm } from './utils.js';
 
 export async function loadRecentArtistas() {
     const tbody = document.querySelector('#table-artista tbody');

@@ -1,4 +1,4 @@
-import { showMessage, showConfirm } from './utilities.js';
+import { showMessage, showConfirm } from './utils.js';
 
 export async function loadGravadoraSelect() {
     const select = document.getElementById('Lista_gravadora');

@@ -1,4 +1,4 @@
-import { showMessage, showConfirm } from '../shared/utils.js';
+import { showMessage, showConfirm } from './utils.js';
 
 export async function loadRecentAlbuns() {
     const tbody = document.querySelector('#table-album tbody');
