@@ -1,5 +1,7 @@
 import { showMessage, showConfirm } from './utils.js';
 
+let editingId = null;
+
 export async function loadRecentArtistas() {
     const tbody = document.querySelector('#table-artista tbody');
     if (!tbody) return;
@@ -43,20 +45,7 @@ function attachArtistaActions() {
             const nome = e.target.dataset.nome;
             const form = document.getElementById('form-artista');
             form.querySelector('input[name="artista_nome"]').value = nome;
-            const originalSubmit = form.onsubmit;
-            form.onsubmit = async (event) => {
-                event.preventDefault();
-                const novoNome = form.querySelector('input[name="artista_nome"]').value.trim();
-                if (!novoNome) return;
-                const result = await window.lojaMusica.artista.editar({ id, nome: novoNome });
-                if (result.erro) showMessage('Erro', result.erro);
-                else {
-                    showMessage('Sucesso', 'Artista atualizado.');
-                    form.reset();
-                    form.onsubmit = originalSubmit;
-                    loadRecentArtistas();
-                }
-            };
+            editingId = id;
         });
     });
 }
@@ -64,17 +53,30 @@ function attachArtistaActions() {
 export function setupArtistaForm() {
     const form = document.getElementById('form-artista');
     if (!form) return;
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const input = form.querySelector('input[name="artista_nome"]');
-        const nome = input.value.trim();
-        if (!nome) return;
-        const result = await window.lojaMusica.artista.criar(nome);
-        if (result.erro) showMessage('Erro', result.erro);
-        else {
-            showMessage('Sucesso', 'Artista criado.');
-            form.reset();
-            loadRecentArtistas();
-        }
-    });
+    form.removeEventListener('submit', handleArtistaSubmit);
+    form.addEventListener('submit', handleArtistaSubmit);
+}
+
+async function handleArtistaSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const input = form.querySelector('input[name="artista_nome"]');
+    const nome = input.value.trim();
+    if (!nome) return;
+
+    let result;
+    if (editingId) {
+        result = await window.lojaMusica.artista.editar({ id: editingId, nome });
+    } else {
+        result = await window.lojaMusica.artista.criar(nome);
+    }
+
+    if (result.erro) {
+        showMessage('Erro', result.erro);
+    } else {
+        showMessage('Sucesso', editingId ? 'Artista atualizado.' : 'Artista criado.');
+        form.reset();
+        editingId = null;
+        loadRecentArtistas();
+    }
 }

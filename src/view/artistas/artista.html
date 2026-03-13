@@ -46,6 +46,30 @@
         </nav>
     </main>
 
+    <div class="modal fade" id="editArtistaModal" tabindex="-1" aria-labelledby="editArtistaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editArtistaModalLabel">Editar Artista</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editArtistaForm">
+                        <input type="hidden" id="editArtistaId">
+                        <div class="mb-3">
+                            <label for="editArtistaNome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="editArtistaNome" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveArtistaEdit">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>      
+
     <script src="../../../node_modules/bootstrap/dist/js/bootstrap.js"></script>
     <script src="./redererArtista.js"></script>
 </body>

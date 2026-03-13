@@ -1,5 +1,7 @@
 import { showMessage, showConfirm } from './utils.js';
 
+let editingId = null;
+
 export async function loadGravadoraSelect() {
     const select = document.getElementById('Lista_gravadora');
     if (!select) return;
@@ -58,21 +60,7 @@ function attachGravadoraActions() {
             const nome = e.target.dataset.nome;
             const form = document.getElementById('form-gravadora');
             form.querySelector('input[name="nome"]').value = nome;
-            const originalSubmit = form.onsubmit;
-            form.onsubmit = async (event) => {
-                event.preventDefault();
-                const novoNome = form.querySelector('input[name="nome"]').value.trim();
-                if (!novoNome) return;
-                const result = await window.lojaMusica.gravadora.editar({ id, nome: novoNome });
-                if (result.erro) showMessage('Erro', result.erro);
-                else {
-                    showMessage('Sucesso', 'Gravadora atualizada.');
-                    form.reset();
-                    form.onsubmit = originalSubmit;
-                    loadRecentGravadoras();
-                    loadGravadoraSelect();
-                }
-            };
+            editingId = id;
         });
     });
 }
@@ -80,18 +68,31 @@ function attachGravadoraActions() {
 export function setupGravadoraForm() {
     const form = document.getElementById('form-gravadora');
     if (!form) return;
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const input = form.querySelector('input[name="nome"]');
-        const nome = input.value.trim();
-        if (!nome) return;
-        const result = await window.lojaMusica.gravadora.criar(nome);
-        if (result.erro) showMessage('Erro', result.erro);
-        else {
-            showMessage('Sucesso', 'Gravadora criada.');
-            form.reset();
-            loadRecentGravadoras();
-            loadGravadoraSelect();
-        }
-    });
+    form.removeEventListener('submit', handleGravadoraSubmit);
+    form.addEventListener('submit', handleGravadoraSubmit);
+}
+
+async function handleGravadoraSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const input = form.querySelector('input[name="nome"]');
+    const nome = input.value.trim();
+    if (!nome) return;
+
+    let result;
+    if (editingId) {
+        result = await window.lojaMusica.gravadora.editar({ id: editingId, nome });
+    } else {
+        result = await window.lojaMusica.gravadora.criar(nome);
+    }
+
+    if (result.erro) {
+        showMessage('Erro', result.erro);
+    } else {
+        showMessage('Sucesso', editingId ? 'Gravadora atualizada.' : 'Gravadora criada.');
+        form.reset();
+        editingId = null;
+        loadRecentGravadoras();
+        loadGravadoraSelect();
+    }
 }

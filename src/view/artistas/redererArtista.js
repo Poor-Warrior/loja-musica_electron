@@ -1,6 +1,30 @@
 let currentPage = 1;
 let currentSearch = '';
 
+document.addEventListener('DOMContentLoaded', () => {
+    const saveBtn = document.getElementById('saveArtistaEdit');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', handleArtistaEdit);
+    }
+});
+
+async function handleArtistaEdit() {
+    const id = document.getElementById('editArtistaId').value;
+    const nome = document.getElementById('editArtistaNome').value.trim();
+    if (!nome) return;
+
+    const result = await window.lojaMusica.artista.editar({ id, nome });
+    if (result.erro) {
+        window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
+    } else {
+        window.dialog.exibirDialogMensagem({ titulo: 'Sucesso', mensagem: 'Artista atualizado.' });
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editArtistaModal'));
+        modal.hide();
+
+        loadArtistas(currentPage, currentSearch);
+    }
+}
+
 async function loadArtistas(page = 1, search = '') {
     const result = await window.lojaMusica.artista.listarPaginado(page, search);
     if (result.erro) {
@@ -67,17 +91,12 @@ function attachActions() {
         btn.addEventListener('click', (e) => {
             const id = e.target.dataset.id;
             const nome = e.target.dataset.nome;
-            const novoNome = prompt('Editar nome:', nome);
-            if (novoNome && novoNome !== nome) {
-                window.lojaMusica.artista.editar({ id, nome: novoNome }).then(result => {
-                    if (result.erro) {
-                        window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
-                    } else {
-                        window.dialog.exibirDialogMensagem({ titulo: 'Sucesso', mensagem: 'Artista atualizado.' });
-                        loadArtistas(currentPage, currentSearch);
-                    }
-                });
-            }
+            
+            document.getElementById('editArtistaId').value = id;
+            document.getElementById('editArtistaNome').value = nome;
+
+            const modal = new bootstrap.Modal(document.getElementById('editArtistaModal'));
+            modal.show();
         });
     });
 }

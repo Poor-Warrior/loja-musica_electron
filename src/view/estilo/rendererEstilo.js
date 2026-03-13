@@ -1,6 +1,28 @@
 let currentPage = 1;
 let currentSearch = '';
 
+document.addEventListener('DOMContentLoaded', () => {
+    const saveBtn = document.getElementById('saveEstiloEdit');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', handleEstiloEdit);
+    }
+});
+
+async function handleEstiloEdit() {
+    const id = document.getElementById('editEstiloId').value;
+    const descricao = document.getElementById('editEstiloDescricao').value.trim();
+    if (!descricao) return;
+
+    const result = await window.lojaMusica.estilo.editar({ id, descricao });
+    if (result.erro) {
+        window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
+    } else {
+        window.dialog.exibirDialogMensagem({ titulo: 'Sucesso', mensagem: 'Estilo atualizado.' });
+        bootstrap.Modal.getInstance(document.getElementById('editEstiloModal')).hide();
+        loadEstilos(currentPage, currentSearch);
+    }
+}
+
 async function loadEstilos(page = 1, search = '') {
     const result = await window.lojaMusica.estilo.listarPaginado(page, search);
     if (result.erro) {
@@ -67,17 +89,12 @@ function attachActions() {
         btn.addEventListener('click', (e) => {
             const id = e.target.dataset.id;
             const descricao = e.target.dataset.descricao;
-            const novaDesc = prompt('Editar descrição:', descricao);
-            if (novaDesc && novaDesc !== descricao) {
-                window.lojaMusica.estilo.editar({ id, descricao: novaDesc }).then(result => {
-                    if (result.erro) {
-                        window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
-                    } else {
-                        window.dialog.exibirDialogMensagem({ titulo: 'Sucesso', mensagem: 'Estilo atualizado.' });
-                        loadEstilos(currentPage, currentSearch);
-                    }
-                });
-            }
+            
+            document.getElementById('editEstiloId').value = id;
+            document.getElementById('editEstiloDescricao').value = descricao;
+
+            const modal = new bootstrap.Modal(document.getElementById('editEstiloModal'));
+            modal.show();
         });
     });
 }

@@ -1,6 +1,60 @@
 let currentPage = 1;
 let currentSearch = '';
 
+document.addEventListener('DOMContentLoaded', () => {
+    const saveBtn = document.getElementById('saveMusicaEdit');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', handleMusicaEdit);
+    }
+    const modalEl = document.getElementById('editMusicaModal');
+    if (modalEl) {
+        modalEl.addEventListener('show.bs.modal', loadEstilosForModal);
+    }
+});
+
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const parts = dateString.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`; // dd/mm/yyyy
+    }
+    return dateString;
+}
+
+async function loadEstilosForModal() {
+    const select = document.getElementById('editMusicaEstilo');
+    const result = await window.lojaMusica.estilo.listar();
+    if (result.erro) {
+        window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
+        return;
+    }
+    select.innerHTML = '<option value="">Selecione...</option>';
+    result.forEach(e => {
+        const option = document.createElement('option');
+        option.value = e.estilo_id;
+        option.textContent = e.descricao;
+        select.appendChild(option);
+    });
+}
+
+async function handleMusicaEdit() {
+    const id = document.getElementById('editMusicaId').value;
+    const nome = document.getElementById('editMusicaNome').value.trim();
+    const duracao = document.getElementById('editMusicaDuracao').value;
+    const data = document.getElementById('editMusicaData').value;
+    const estilo_id = document.getElementById('editMusicaEstilo').value;
+    if (!nome || !duracao || !data || !estilo_id) return;
+
+    const result = await window.lojaMusica.musica.editar({ id, nome, duracao, data_lancamento: data, estilo_id });
+    if (result.erro) {
+        window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
+    } else {
+        window.dialog.exibirDialogMensagem({ titulo: 'Sucesso', mensagem: 'Música atualizada.' });
+        bootstrap.Modal.getInstance(document.getElementById('editMusicaModal')).hide();
+        loadMusicas(currentPage, currentSearch);
+    }
+}
+
 async function loadMusicas(page = 1, search = '') {
     const result = await window.lojaMusica.musica.listarPaginado(page, search);
     if (result.erro) {
@@ -16,7 +70,7 @@ async function loadMusicas(page = 1, search = '') {
             <td>${m.musica_id}</td>
             <td>${m.nome}</td>
             <td>${m.duracao}</td>
-            <td>${m.data_lancamento}</td>
+            <td>${formatDate(m.data_lancamento)}</td>
             <td>${m.estilo_nome || ''}</td>
             <td>
                 <button class="btn btn-sm btn-primary editar" data-id="${m.musica_id}" data-nome="${m.nome}" data-duracao="${m.duracao}" data-data="${m.data_lancamento}" data-estilo="${m.estilo_id}">Editar</button>
@@ -73,29 +127,16 @@ function attachActions() {
             const duracao = e.target.dataset.duracao;
             const data = e.target.dataset.data;
             const estilo = e.target.dataset.estilo;
-            const novoNome = prompt('Editar nome:', nome);
-            if (!novoNome) return;
-            const novaDuracao = prompt('Editar duração (HH:MM):', duracao);
-            if (!novaDuracao) return;
-            const novaData = prompt('Editar data (YYYY-MM-DD):', data);
-            if (!novaData) return;
-            const novoEstilo = prompt('Editar ID do estilo:', estilo);
-            if (!novoEstilo) return;
             
-            window.lojaMusica.musica.editar({ 
-                id, 
-                nome: novoNome, 
-                duracao: novaDuracao, 
-                data_lancamento: novaData, 
-                estilo_id: novoEstilo 
-            }).then(result => {
-                if (result.erro) {
-                    window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
-                } else {
-                    window.dialog.exibirDialogMensagem({ titulo: 'Sucesso', mensagem: 'Música atualizada.' });
-                    loadMusicas(currentPage, currentSearch);
-                }
-            });
+            document.getElementById('editMusicaId').value = id;
+            document.getElementById('editMusicaNome').value = nome;
+            document.getElementById('editMusicaDuracao').value = duracao;
+            document.getElementById('editMusicaData').value = data;
+            const select = document.getElementById('editMusicaEstilo');
+            select.value = estilo;
+
+            const modal = new bootstrap.Modal(document.getElementById('editMusicaModal'));
+            modal.show();
         });
     });
 }

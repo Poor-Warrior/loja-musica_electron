@@ -49,6 +49,44 @@
         </nav>
     </main>
 
+    <div class="modal fade" id="editMusicaModal" tabindex="-1" aria-labelledby="editMusicaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editMusicaModalLabel">Editar Música</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editMusicaForm">
+                        <input type="hidden" id="editMusicaId">
+                        <div class="mb-3">
+                            <label for="editMusicaNome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="editMusicaNome" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMusicaDuracao" class="form-label">Duração (ex: 03:30)</label>
+                            <input type="text" class="form-control" id="editMusicaDuracao" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMusicaData" class="form-label">Data de Lançamento</label>
+                            <input type="date" class="form-control" id="editMusicaData" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMusicaEstilo" class="form-label">Estilo</label>
+                            <select class="form-control" id="editMusicaEstilo" required>
+                                <option value="">Selecione...</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveMusicaEdit">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="../../../node_modules/bootstrap/dist/js/bootstrap.js"></script>
     <script src="./rendererMusica.js"></script>
 </body>

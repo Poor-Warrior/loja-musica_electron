@@ -1,6 +1,59 @@
 let currentPage = 1;
 let currentSearch = '';
 
+document.addEventListener('DOMContentLoaded', () => {
+    const saveBtn = document.getElementById('saveAlbumEdit');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', handleAlbumEdit);
+    }
+    const modalEl = document.getElementById('editAlbumModal');
+    if (modalEl) {
+        modalEl.addEventListener('show.bs.modal', loadGravadorasForModal);
+    }
+});
+
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const parts = dateString.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`; // dd/mm/yyyy
+    }
+    return dateString;
+}
+
+async function loadGravadorasForModal() {
+    const select = document.getElementById('editAlbumGravadora');
+    const result = await window.lojaMusica.gravadora.listar();
+    if (result.erro) {
+        window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
+        return;
+    }
+    select.innerHTML = '<option value="">Selecione...</option>';
+    result.forEach(g => {
+        const option = document.createElement('option');
+        option.value = g.gravadora_id;
+        option.textContent = g.nome;
+        select.appendChild(option);
+    });
+}
+
+async function handleAlbumEdit() {
+    const id = document.getElementById('editAlbumId').value;
+    const nome = document.getElementById('editAlbumNome').value.trim();
+    const data = document.getElementById('editAlbumData').value;
+    const gravadora_id = document.getElementById('editAlbumGravadora').value;
+    if (!nome || !data || !gravadora_id) return;
+    const imagem = '';
+    const result = await window.lojaMusica.disco.editar({ id, nome, data_lancamento: data, imagem, gravadora_id });
+    if (result.erro) {
+        window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
+    } else {
+        window.dialog.exibirDialogMensagem({ titulo: 'Sucesso', mensagem: 'Álbum atualizado.' });
+        bootstrap.Modal.getInstance(document.getElementById('editAlbumModal')).hide();
+        loadAlbuns(currentPage, currentSearch);
+    }
+}
+
 async function loadAlbuns(page = 1, search = '') {
     const result = await window.lojaMusica.disco.listarPaginado(page, search);
     if (result.erro) {
@@ -16,7 +69,7 @@ async function loadAlbuns(page = 1, search = '') {
             <td>${d.disco_id}</td>
             <td>${d.imagem ? `<img src="${d.imagem}" width="50">` : ''}</td>
             <td>${d.nome}</td>
-            <td>${d.data_lancamento}</td>
+            <td>${formatDate(d.data_lancamento)}</td>
             <td>${d.gravadora_nome || ''}</td>
             <td>
                 <button class="btn btn-sm btn-primary editar" data-id="${d.disco_id}" data-nome="${d.nome}" data-data="${d.data_lancamento}" data-imagem="${d.imagem}" data-gravadora="${d.gravadora_id}">Editar</button>
@@ -72,28 +125,16 @@ function attachActions() {
             const nome = e.target.dataset.nome;
             const data = e.target.dataset.data;
             const gravadora = e.target.dataset.gravadora;
-            const imagem = e.target.dataset.imagem;
-            const novoNome = prompt('Editar nome do álbum:', nome);
-            if (!novoNome) return;
-            const novaData = prompt('Editar data (YYYY-MM-DD):', data);
-            if (!novaData) return;
-            const novaGravadora = prompt('Editar ID da gravadora:', gravadora);
-            if (!novaGravadora) return;
-            // imagem not handled in prompt
-            window.lojaMusica.disco.editar({ 
-                id, 
-                nome: novoNome, 
-                data_lancamento: novaData, 
-                imagem: imagem, 
-                gravadora_id: novaGravadora 
-            }).then(result => {
-                if (result.erro) {
-                    window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
-                } else {
-                    window.dialog.exibirDialogMensagem({ titulo: 'Sucesso', mensagem: 'Álbum atualizado.' });
-                    loadAlbuns(currentPage, currentSearch);
-                }
-            });
+            
+            document.getElementById('editAlbumId').value = id;
+            document.getElementById('editAlbumNome').value = nome;
+            document.getElementById('editAlbumData').value = data;
+
+            const select = document.getElementById('editAlbumGravadora');
+            select.value = gravadora;
+
+            const modal = new bootstrap.Modal(document.getElementById('editAlbumModal'));
+            modal.show();
         });
     });
 }

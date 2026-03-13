@@ -1,4 +1,6 @@
-import {showMessage, showConfirm} from './utils.js';
+import {showMessage, showConfirm, formatDate} from './utils.js';
+
+let editingId = null;
 
 export async function loadRecentMusicas() {
     const tbody = document.querySelector('#table-musica tbody');
@@ -12,7 +14,7 @@ export async function loadRecentMusicas() {
             <td>${m.musica_id}</td>
             <td>${m.nome}</td>
             <td>${m.duracao}</td>
-            <td>${m.data_lancamento}</td>
+            <td>${formatDate(m.data_lancamento)}</td>
             <td>${m.estilo_nome || ''}</td>
             <td>
                 <button class="btn btn-sm btn-primary editar-musica" data-id="${m.musica_id}" data-nome="${m.nome}" data-duracao="${m.duracao}" data-data="${m.data_lancamento}" data-estilo="${m.estilo_id}">Editar</button>
@@ -47,23 +49,7 @@ function attachMusicaActions() {
             form.querySelector('input[name="duracao"]').value = duracao;
             form.querySelector('input[name="musica_lancamento"]').value = data;
             form.querySelector('select[name="estilo_id"]').value = estilo;
-            const originalSubmit = form.onsubmit;
-            form.onsubmit = async (event) => {
-                event.preventDefault();
-                const novoNome = form.querySelector('input[name="musica_nome"]').value.trim();
-                const novaDuracao = form.querySelector('input[name="duracao"]').value;
-                const novaData = form.querySelector('input[name="musica_lancamento"]').value;
-                const novoEstilo = form.querySelector('select[name="estilo_id"]').value;
-                if (!novoNome || !novaDuracao || !novaData || !novoEstilo) return showMessage('Aviso', 'Preencha todos os campos.');
-                const result = await window.lojaMusica.musica.editar({ id, nome: novoNome, duracao: novaDuracao, data_lancamento: novaData, estilo_id: novoEstilo });
-                if (result.erro) showMessage('Erro', result.erro);
-                else {
-                    showMessage('Sucesso', 'Música atualizada.');
-                    form.reset();
-                    form.onsubmit = originalSubmit;
-                    loadRecentMusicas();
-                }
-            };
+            editingId = id;
         });
     });
 }
@@ -71,19 +57,32 @@ function attachMusicaActions() {
 export function setupMusicaForm() {
     const form = document.getElementById('form-musica');
     if (!form) return;
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const nome = form.querySelector('input[name="musica_nome"]').value.trim();
-        const duracao = form.querySelector('input[name="duracao"]').value;
-        const data = form.querySelector('input[name="musica_lancamento"]').value;
-        const estilo = form.querySelector('select[name="estilo_id"]').value;
-        if (!nome || !duracao || !data || !estilo) return showMessage('Aviso', 'Preencha todos os campos.');
-        const result = await window.lojaMusica.musica.criar({ nome, duracao, data_lancamento: data, estilo_id: estilo });
-        if (result.erro) showMessage('Erro', result.erro);
-        else {
-            showMessage('Sucesso', 'Música criada.');
-            form.reset();
-            loadRecentMusicas();
-        }
-    });
+    form.removeEventListener('submit', handleMusicaSubmit);
+    form.addEventListener('submit', handleMusicaSubmit);
+}
+
+async function handleMusicaSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const nome = form.querySelector('input[name="musica_nome"]').value.trim();
+    const duracao = form.querySelector('input[name="duracao"]').value;
+    const data = form.querySelector('input[name="musica_lancamento"]').value;
+    const estilo = form.querySelector('select[name="estilo_id"]').value;
+    if (!nome || !duracao || !data || !estilo) return showMessage('Aviso', 'Preencha todos os campos.');
+
+    let result;
+    if (editingId) {
+        result = await window.lojaMusica.musica.editar({ id: editingId, nome, duracao, data_lancamento: data, estilo_id: estilo });
+    } else {
+        result = await window.lojaMusica.musica.criar({ nome, duracao, data_lancamento: data, estilo_id: estilo });
+    }
+
+    if (result.erro) {
+        showMessage('Erro', result.erro);
+    } else {
+        showMessage('Sucesso', editingId ? 'Música atualizada.' : 'Música criada.');
+        form.reset();
+        editingId = null;
+        loadRecentMusicas();
+    }
 }

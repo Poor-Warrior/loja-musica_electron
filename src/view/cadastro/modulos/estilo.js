@@ -1,5 +1,7 @@
 import {showMessage, showConfirm} from './utils.js';
 
+let editingId = null;
+
 export async function loadEstiloSelect() {
     const select = document.getElementById('Lista_estilo');
     if (!select) return;
@@ -58,22 +60,7 @@ function attachEstiloActions() {
             const descricao = e.target.dataset.descricao;
             const form = document.getElementById('form-estilo');
             form.querySelector('input[name="descricao"]').value = descricao;
-            // Temporarily override form submit
-            const originalSubmit = form.onsubmit;
-            form.onsubmit = async (event) => {
-                event.preventDefault();
-                const novaDesc = form.querySelector('input[name="descricao"]').value.trim();
-                if (!novaDesc) return;
-                const result = await window.lojaMusica.estilo.editar({ id, descricao: novaDesc });
-                if (result.erro) showMessage('Erro', result.erro);
-                else {
-                    showMessage('Sucesso', 'Estilo atualizado.');
-                    form.reset();
-                    form.onsubmit = originalSubmit; // restore form original behavior
-                    loadRecentEstilos();
-                    loadEstiloSelect();
-                }
-            };
+            editingId = id;
         });
     });
 }
@@ -81,18 +68,31 @@ function attachEstiloActions() {
 export function setupEstiloForm() {
     const form = document.getElementById('form-estilo');
     if (!form) return;
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const input = form.querySelector('input[name="descricao"]');
-        const desc = input.value.trim();
-        if (!desc) return;
-        const result = await window.lojaMusica.estilo.criar(desc);
-        if (result.erro) showMessage('Erro', result.erro);
-        else {
-            showMessage('Sucesso', 'Estilo criado.');
-            form.reset();
-            loadRecentEstilos();
-            loadEstiloSelect();
-        }
-    });
+    form.removeEventListener('submit', handleEstiloSubmit);
+    form.addEventListener('submit', handleEstiloSubmit);
+}
+
+async function handleEstiloSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const input = form.querySelector('input[name="descricao"]');
+    const desc = input.value.trim();
+    if (!desc) return;
+
+    let result;
+    if (editingId) {
+        result = await window.lojaMusica.estilo.editar({ id: editingId, descricao: desc });
+    } else {
+        result = await window.lojaMusica.estilo.criar(desc);
+    }
+
+    if (result.erro) {
+        showMessage('Erro', result.erro);
+    } else {
+        showMessage('Sucesso', editingId ? 'Estilo atualizado.' : 'Estilo criado.');
+        form.reset();
+        editingId = null;
+        loadRecentEstilos();
+        loadEstiloSelect();
+    }
 }

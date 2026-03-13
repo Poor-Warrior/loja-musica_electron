@@ -1,6 +1,28 @@
 let currentPage = 1;
 let currentSearch = '';
 
+document.addEventListener('DOMContentLoaded', () => {
+    const saveBtn = document.getElementById('saveGravadoraEdit');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', handleGravadoraEdit);
+    }
+});
+
+async function handleGravadoraEdit() {
+    const id = document.getElementById('editGravadoraId').value;
+    const nome = document.getElementById('editGravadoraNome').value.trim();
+    if (!nome) return;
+
+    const result = await window.lojaMusica.gravadora.editar({ id, nome });
+    if (result.erro) {
+        window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
+    } else {
+        window.dialog.exibirDialogMensagem({ titulo: 'Sucesso', mensagem: 'Gravadora atualizada.' });
+        bootstrap.Modal.getInstance(document.getElementById('editGravadoraModal')).hide();
+        loadGravadoras(currentPage, currentSearch);
+    }
+}
+
 async function loadGravadoras(page = 1, search = '') {
     const result = await window.lojaMusica.gravadora.listarPaginado(page, search);
     if (result.erro) {
@@ -67,17 +89,12 @@ function attachActions() {
         btn.addEventListener('click', (e) => {
             const id = e.target.dataset.id;
             const nome = e.target.dataset.nome;
-            const novoNome = prompt('Editar nome:', nome);
-            if (novoNome && novoNome !== nome) {
-                window.lojaMusica.gravadora.editar({ id, nome: novoNome }).then(result => {
-                    if (result.erro) {
-                        window.dialog.exibirDialogMensagem({ titulo: 'Erro', mensagem: result.erro });
-                    } else {
-                        window.dialog.exibirDialogMensagem({ titulo: 'Sucesso', mensagem: 'Gravadora atualizada.' });
-                        loadGravadoras(currentPage, currentSearch);
-                    }
-                });
-            }
+            
+            document.getElementById('editGravadoraId').value = id;
+            document.getElementById('editGravadoraNome').value = nome;
+
+            const modal = new bootstrap.Modal(document.getElementById('editGravadoraModal'));
+            modal.show();
         });
     });
 }
